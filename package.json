@@ -15,6 +15,8 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "face-plus-plus": "0.0.3",
-    "face-plusplus-node": "0.0.6"
+    "face-plusplus-node": "0.0.6",
+    "knex": "^0.19.5",
+    "pg": "^7.12.1"
   }
 }

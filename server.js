@@ -3,18 +3,27 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
 
-const fpp = require('face-plusplus-node');
+const knex = require('knex')({
+    client: 'pg',
+    connection: {
+      host : '127.0.0.1',
+      user : 'Kyle',
+      password : '',
+      database : 'face-swap'
+    }
+  });
+// const fpp = require('face-plusplus-node');
 
 const APIkey = '1ltOS1IXZ1VTu_UyqY3S0HbV_DK3EJwA';
 const APISecret = '2h4nPYp5Hs8qUAsfOM3H8TzQTKuoMZKZ';
 
-fpp.setApiKey(APIkey);
-fpp.setApiSecret(APISecret);
+// fpp.setApiKey(APIkey);
+// fpp.setApiSecret(APISecret);
 
 const app = express();
 // app.use(bodyParser.json())
-app.use(bodyParser.json({limit: '10mb', extended: true}));
-app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true}));
 app.use(cors());
 
 
