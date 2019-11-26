@@ -9,15 +9,16 @@ const db = knex({
     connection: {
       host : '127.0.0.1',
       user : 'postgres',
-      password : 'password',
-      database : 'face-swap-api'
+      password : 'postgres',
+      database : 'postgres'
     }
 });
-db.select('*').from('users').then(data => {
-    console.log(data);
-});
-
+// db.select('*').from('users').then(data => {
+//     console.log(data);
+// });
+// console.log(db);
 // console.log(db.select('*').from('users'));
+// db.select('*').from('users');
 
 const app = express();
 app.use(bodyParser.json());
@@ -39,13 +40,17 @@ app.post('/signin', (req,res) => {
 
 app.post('/register', (req,res) => {
     const { name, email, password } = req.body;
-    db('users').insert({
+    db('users')
+        .returning('*')
+        .insert({
         name : name,
         email: email,
-        entries: 0,
+        // entries: 0,
         joined: new Date()
-    }).then(console.log);
-    res.send("register");
+        })
+        .then(user => res.json(user))
+        .catch(error => res.status(400).json("Unable to register"))
+    
 })
 /*
 / --> res 
