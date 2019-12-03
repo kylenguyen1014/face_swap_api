@@ -14,12 +14,6 @@ const db = knex({
       database : 'postgres'
     }
 });
-// db.select('*').from('users').then(data => {
-//     console.log(data);
-// });
-// console.log(db);
-// console.log(db.select('*').from('users'));
-// db.select('*').from('users');
 
 const app = express();
 app.use(bodyParser.json());
@@ -29,10 +23,6 @@ app.use(cors());
 
 app.get('/', (req,res) => {
     res.send("this is working");
-})
-
-app.post('/image', (req,res) => {
-    
 })
 
 app.post('/signin', (req,res) => {
@@ -90,7 +80,16 @@ app.post('/register', (req,res) => {
             .catch(trx.rollback)
     })
     .catch(err => res.status(400).json('Unable to register'))
-    
+})
+
+app.put('/image', (req,res) => {
+    const { email } = req.body;
+    db('users')
+        .where('email', email)
+        .increment('entries', 1)
+        .returning('*')
+        .then(user => res.json(user[0]))
+        .catch(err => res.status(400).json('Unable to get entries'))
 })
 /*
 / --> res 
