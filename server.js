@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const uuid = require('uuid/v4');
 const knex = require('knex');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const db = knex({
     client: 'pg',
@@ -13,9 +14,9 @@ const db = knex({
       database : 'postgres'
     }
 });
-// db.select('*').from('users').then(data => {
-//     console.log(data);
-// });
+db.select('*').from('users').then(data => {
+    console.log(data);
+});
 // console.log(db);
 // console.log(db.select('*').from('users'));
 // db.select('*').from('users');
@@ -35,21 +36,42 @@ app.post('/image', (req,res) => {
 })
 
 app.post('/signin', (req,res) => {
+    const { email, password } = req.body;
+    if (!email || !password){
+        return res.status(400).json('Unable to sign in');
+    }
 
 })
 
 app.post('/register', (req,res) => {
     const { name, email, password } = req.body;
-    db('users')
-        .returning('*')
-        .insert({
-        name : name,
-        email: email,
-        // entries: 0,
-        joined: new Date()
-        })
-        .then(user => res.json(user))
-        .catch(error => res.status(400).json("Unable to register"))
+    if (!email || !password || !name){
+        return res.status(400).json('Unable to register');
+    }
+    const hash = bcrypt.hashSync(password, saltRounds);
+
+    db.transaction((trx) => {
+        trx('login')
+            .returning('email')
+            .insert({
+                email: email,
+                hash : hash
+            })
+            .then(email => {
+                return trx('users')
+                        .returning('*')
+                        .insert({
+                            name : name,
+                            email: email[0],
+                            joined: new Date()
+                        })
+                        .then(user => res.json(user))
+                        .catch(error => res.status(400).json("Unable to register"))
+            })
+            .then(trx.commit)
+            .catch(trx.rollback)
+    })
+    .catch(err => res.status(400).json('Unable to register'))
     
 })
 /*
