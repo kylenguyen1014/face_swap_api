@@ -14,9 +14,9 @@ const db = knex({
       database : 'postgres'
     }
 });
-db.select('*').from('users').then(data => {
-    console.log(data);
-});
+// db.select('*').from('users').then(data => {
+//     console.log(data);
+// });
 // console.log(db);
 // console.log(db.select('*').from('users'));
 // db.select('*').from('users');
@@ -41,6 +41,24 @@ app.post('/signin', (req,res) => {
         return res.status(400).json('Unable to sign in');
     }
 
+    db('login')
+        .where('email',email)
+        .select('*')
+        .then(data => {
+            const isValid = bcrypt.compareSync(password, data[0].hash);
+            if (isValid){
+                return db('users')
+                        .select('*')
+                        .where('email', email)
+                        .then(user => {
+                            res.json(user[0]);
+                        })
+                        .catch(err => res.status(400).json('Unable to get user'))
+            } else {
+                res.status(400).json('Wrong credentials');
+            }          
+        })
+        .catch(err => res.status(400).json('Wrong credentials'))
 })
 
 app.post('/register', (req,res) => {
@@ -84,6 +102,6 @@ app.post('/register', (req,res) => {
 */
 
 
-app.listen(8000, () =>  {
+app.listen( process.env.PORT || 8000, () =>  {
     console.log("app is running on port 8000");
 })
