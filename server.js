@@ -4,6 +4,10 @@ const cors = require('cors');
 const knex = require('knex');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const axios = require('axios');
+
+const APIkey = '1ltOS1IXZ1VTu_UyqY3S0HbV_DK3EJwA';
+const APISecret = '2h4nPYp5Hs8qUAsfOM3H8TzQTKuoMZKZ';
 
 const db = knex({
     client: 'pg',
@@ -87,9 +91,30 @@ app.put('/image', (req,res) => {
     db('users')
         .where('email', email)
         .increment('entries', 1)
-        .returning('*')
-        .then(user => res.json(user[0]))
+        .returning('entries')
+        .then(entries => res.json(entries[0]))
         .catch(err => res.status(400).json('Unable to get entries'))
+})
+
+app.post('/imageurl', (req,res) => {
+    const { template, merging } = req.body;
+
+    const params = {
+        api_key: APIkey,
+        api_secret: APISecret,
+        template_url:template,
+        merge_url : merging
+    };
+
+    axios({
+        method : 'post',
+        url :'https://us.faceplusplus.com/imagepp/v1/mergeface',
+        params : params
+    })
+    .then(response => {
+        res.send(response.data);
+    })
+    .catch(err => res.status(400).json('Failed to merge images'))
 })
 /*
 / --> res 
