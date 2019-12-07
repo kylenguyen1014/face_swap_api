@@ -77,7 +77,7 @@ app.post('/register', (req,res) => {
                             email: email[0],
                             joined: new Date()
                         })
-                        .then(user => res.json(user))
+                        .then(user => res.json(user[0]))
                         .catch(error => res.status(400).json("Unable to register"))
             })
             .then(trx.commit)
@@ -116,14 +116,6 @@ app.post('/imageurl', (req,res) => {
     })
     .catch(err => res.status(400).json('Failed to merge images'))
 })
-/*
-/ --> res 
-/singin --> post
-/register --> post
-/profile/:userId --> get
-/image -->PUT -->user
-
-*/
 
 
 app.listen( process.env.PORT || 8000, () =>  {
