@@ -12,7 +12,7 @@ const APISecret = '2h4nPYp5Hs8qUAsfOM3H8TzQTKuoMZKZ';
 const db = knex({
     client: 'pg',
     connection: {
-      host : '127.0.0.1',
+      host : 'postgresql-corrugated-77443',
       user : 'postgres',
       password : 'postgres',
       database : 'postgres'
