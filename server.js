@@ -12,7 +12,7 @@ const APISecret = '2h4nPYp5Hs8qUAsfOM3H8TzQTKuoMZKZ';
 const db = knex({
     client: 'pg',
     connection: {
-      host : process.env.DATABASE_URL,
+      connectString : process.env.DATABASE_URL,
       ssl: true,
     }
 });
